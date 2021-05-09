@@ -30,8 +30,23 @@ upload.modules.addmodule({
             </form>\
             </div>\
         </div>',
+
+    welcome: '\
+        <div class="topbar">\
+        </div>\
+        <div class="contentarea" id="uploadview">\
+            <div class="centerview">\
+            <div id="helloarea" class="boxarea">\
+                <h1>Welcome</h1>\
+            </div>\
+            </div>\
+        </div>',
+
     init: function () {
         upload.modules.setdefault(this)
+        if (!upload.config.browser_upload) {
+            return;
+        }
         $(document).on('change', '#filepicker', this.pickerchange.bind(this))
         $(document).on('click', '#pastearea', this.pickfile.bind(this))
         $(document).on('dragover', '#pastearea', this.dragover.bind(this))
@@ -74,17 +89,21 @@ upload.modules.addmodule({
         return this
     },
     render: function (view) {
-        view.html(this.template)
-        this._ = {}
-        this._.view = view
-        this._.filepicker = view.find('#filepicker')
-        this._.pastearea = view.find('#pastearea')
-        this._.newpaste = view.find('#newpaste')
-        this._.progress = {}
-        this._.progress.main = view.find('#uploadprogress')
-        this._.progress.type = view.find('#progresstype')
-        this._.progress.amount = view.find('#progressamount')
-        this._.progress.bg = view.find('#progressamountbg')
+        if (upload.config.browser_upload) {
+            view.html(this.template)
+            this._ = {}
+            this._.view = view
+            this._.filepicker = view.find('#filepicker')
+            this._.pastearea = view.find('#pastearea')
+            this._.newpaste = view.find('#newpaste')
+            this._.progress = {}
+            this._.progress.main = view.find('#uploadprogress')
+            this._.progress.type = view.find('#progresstype')
+            this._.progress.amount = view.find('#progressamount')
+            this._.progress.bg = view.find('#progressamountbg')
+        } else {
+            view.html(this.welcome)
+        }
         $('#footer').show()
     },
     initroute: function () {
@@ -99,6 +118,8 @@ upload.modules.addmodule({
         $('body').append(this.pastecatcher)
     },
     focuspaste: function () {
+        if (!this.pastecatcher)
+            return;
         setTimeout(function () {
             this.pastecatcher.focus()
         }, 100)
